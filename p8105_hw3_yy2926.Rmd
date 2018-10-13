@@ -58,3 +58,13 @@ ggplot(data=brfss_proportion, aes(x=year, y= mean_data, color=response))+
 ```
 
 
+Problem 2
+```{r Problem2}
+data("instacart")
+instacart_data = instacart %>%
+janitor::clean_names()
+```
+
+
+
+
