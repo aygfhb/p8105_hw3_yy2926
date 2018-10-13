@@ -21,6 +21,7 @@ brfss_data$response = factor (brfss_data$response,levels = c("Excellent","Very g
 brfss_data
 ```
 *** Q1: In 2002, which states were observed at 7 locations?
+
 *** A1: Three states CT,FL,NC were observed at 7 locations in 2002.
 ```{r Question1}
 brfss_data %>%
@@ -28,3 +29,12 @@ group_by(year,locationabbr) %>%
 summarize(n_obs=n()/5) %>%
 filter(year == "2002",n_obs==7)
 ```
+
+```{r Question2}
+observation_date <- count(count(brfss_data,year,locationabbr,locationdesc),year,locationabbr)
+
+```
+
+
+
+
