@@ -1,0 +1,19 @@
+---
+title: "Homework 3"
+author: "Yuxin"
+date: "2018.10.12"
+output: github_document
+---
+```{r setup, include=FALSE}
+devtools::install_github("p8105/p8105.datasets")
+library(tidyverse)
+library(readxl)
+library(p8105.datasets)
+```
+```{r Problem1}
+data("brfs_smart2010")
+brfss_data = brfss_smart2010 %>%
+janitor::clean_names() %>%
+filter(topic == "Overall Health") %>%
+filter(response == "Excellent"| response == "Very good" | response == "Good" | response == "Fair" | response == "Poor")
+```
