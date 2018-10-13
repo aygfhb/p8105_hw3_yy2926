@@ -80,11 +80,20 @@ aisle_order <- data.frame("aisle_id"= aisle_information$aisle_id, "aisle_name" =
 aisle_order <- aisle_order[order(aisle_order$Frequency),]
 aisle_order$aisle_name <- as.factor(aisle_order$aisle_name)
 aisle_order$aisle_name = factor(aisle_order$aisle_name,aisle_order$aisle_name)
-ggplot(aisle_order)+geom_bar(stat="identity",aes(x=aisle_name,y=Frequency))
+ggplot(aisle_order)+geom_bar(stat="identity",aes(x=aisle_name,y=Frequency))+coord_flip()
 ```
        
 *** Q3:Make a table showing the most popular item in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”.
+```{r}
+aisle_popular <- subset(instacart_data,aisle =="baking ingredients"| aisle == "dog food care" | aisle == "packaged vegetables fruits")
+aisle_popular %>%
+group_by(aisle,product_name) %>%
+count(product_name) %>%
+group_by(aisle) %>%
+filter(n==max(n))
+```
 
+*** A3: We can observe taht three most popular item in baking ingredients, dog food care, packaged vegetables fruits ailes are Ligtht Brown Sugar, Snack Sticks CHicken & Rice Recipe Dog Treats.
 
 *** Q4:Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
 
