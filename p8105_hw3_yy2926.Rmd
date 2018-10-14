@@ -105,3 +105,13 @@ summarize(mean_hour = mean(order_hour_of_day))%>%
 spread(key=product_name,value=mean_hour)
 ```
 
+Problem 3
+```{r read and clean data}
+data(ny_noaa)
+noaa_data <- ny_noaa %>%
+  separate(date,into=c("year","month","day",sep="-")) %>%
+  gather(key=type,value=data,prcp:tmin,na.rm=TRUE) %>%
+  transform(data = as.numeric(data))
+noaa_data
+```
+
