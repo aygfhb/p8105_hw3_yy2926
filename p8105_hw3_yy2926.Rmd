@@ -9,6 +9,8 @@ devtools::install_github("p8105/p8105.datasets")
 library(tidyverse)
 library(readxl)
 library(p8105.datasets)
+library(hexbin)
+library(ggpubr)
 ```
 Problem 1
 ```{r Problem1}
@@ -112,6 +114,26 @@ noaa_data <- ny_noaa %>%
   separate(date,into=c("year","month","day",sep="-")) %>%
   gather(key=type,value=data,prcp:tmin,na.rm=TRUE) %>%
   transform(data = as.numeric(data))
-noaa_data
+head(noaa_data)
+```
+```{r qeustion3.1}
+noaa_data %>%
+  filter(type=="snow") %>%
+  group_by(type,data) %>%
+  count(data)
+  
+```
+```{r,fig.width=20,fig.height=15}
+ny_noaa_plot1 <- subset(ny_noaa,!is.na(tmax) & !is.na(tmin))
+ny_noaa_plot1$tmax <- as.numeric (ny_noaa_plot1$tmax)
+ny_noaa_plot1$tmin <- as.numeric (ny_noaa_plot1$tmin)
+ny_noaa_plot2 <- subset(noaa_data, type == "snow" & (data < 100 & data > 0 ))
+par(mfrow=c(1,2))
+plot1 <- ggplot(ny_noaa_plot1,aes(x=tmax,y=tmin))+stat_binhex()
+plot2 <- ggplot(ny_noaa_plot2,aes(x=data,fill=year))+geom_histogram()
+ggarrange(plot1,plot2,labels=c("Tmax vs Tmin","Snow Distribution"))
 ```
 
+*** Q1: For snowfall, what are the most commonly observed values? Why?
+
+*** A1: 
