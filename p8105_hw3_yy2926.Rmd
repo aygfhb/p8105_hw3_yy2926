@@ -117,13 +117,16 @@ noaa_data <- ny_noaa %>%
 head(noaa_data)
 ```
 ```{r qeustion3.1}
-noaa_data %>%
-  filter(type=="snow") %>%
-  group_by(type,data) %>%
-  count(data)
-  
+noaa_snow <- subset(noaa_data, type == "snow")
+noaa_snow_count <- count(noaa_snow, data)
+filter(noaa_snow_count,n == max(n))
 ```
-```{r,fig.width=20,fig.height=15}
+
+*** Q1: For snowfall, what are the most commonly observed values? Why?
+
+*** A1: For snowfall, 0 are the most commonly observed values. This happens beacuse in the most time, we will not have snow days. Thus 0 are the most commonly observe values. 
+
+```{r Question3.3,fig.width=20,fig.height=12}
 ny_noaa_plot1 <- subset(ny_noaa,!is.na(tmax) & !is.na(tmin))
 ny_noaa_plot1$tmax <- as.numeric (ny_noaa_plot1$tmax)
 ny_noaa_plot1$tmin <- as.numeric (ny_noaa_plot1$tmin)
@@ -131,7 +134,7 @@ ny_noaa_plot2 <- subset(noaa_data, type == "snow" & (data < 100 & data > 0 ))
 par(mfrow=c(1,2))
 plot1 <- ggplot(ny_noaa_plot1,aes(x=tmax,y=tmin))+stat_binhex()
 plot2 <- ggplot(ny_noaa_plot2,aes(x=data,fill=year))+geom_histogram()
-ggarrange(plot1,plot2,labels=c("Tmax vs Tmin","Snow Distribution"))
+ggarrange(plot1,plot2,labels=c("Tmax vs Tmin","Distribution Of Snowfall"))
 ```
 
 *** Q1: For snowfall, what are the most commonly observed values? Why?
