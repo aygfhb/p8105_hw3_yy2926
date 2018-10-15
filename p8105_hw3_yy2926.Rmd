@@ -38,6 +38,7 @@ filter(year == "2002",n_obs==7)
 observation_state <- count(count(brfss_data,year,locationabbr,locationdesc),year,locationabbr)
 ggplot(data=observation_state,aes(x=year,y=nn,color=locationabbr))+ylab("number of location")+geom_line(size=0.5)
 ```
+
 *** Q3 Make a table showing, for the years 2002, 2006, and 2010, the mean and standard deviation of the proportion of “Excellent” responses across locations in NY State.
 
 ```{r question1.3}
@@ -50,13 +51,14 @@ brfss_excellent
 
 *** Q4 For each year and state, compute the average proportion in each response category (taking the average across locations in a state). Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time.
 
-```{r question1.4}
+```{r question1.4,fig.width=15}
 brfss_proportion = brfss_data %>%
 group_by(year,locationabbr,response) %>%
 summarize(mean_data = mean(data_value))
 ggplot(data=brfss_proportion, aes(x=year, y= mean_data, color=response))+
   geom_smooth(se=FALSE)+
-  facet_grid(.~response)
+  facet_grid(.~response)+
+    ylab("Average Proportion")
 ```
 
 
@@ -67,6 +69,8 @@ instacart_data = instacart %>%
 janitor::clean_names()
 aisle_summary = count(instacart_data,aisle_id)
 ```
+
+*** Description of the dataset: This dataset contains 1384617 observations of 15 variables. The whole data frame provides us with all necessary information for customer information and what they buy. This data frame has mixed variables of integer and character. There are several essential variables describing customer information: order_id, user_id and product_id give the info of buyer information. Aisele_id, department_id, product_name provide the information of product information including the name and position of those products. The whole data frame offers us all the necessary information for customer information and what they buy. If we contained variables aisle_id and aisle_name, we could figure out the name of the aisle. For example, the aisle_name of 1 is prepared soups salads. If we choose the first row of dataframe. We can observe that customer with id 79431 placed an order id of 36, and he ordered Super Greens Salad which in aisle four packaged fruits and vegetables, and this customer has ordered before. 
 
 *** Q1: How many aisles are there, and which aisles are the most items ordered from?
 
@@ -86,6 +90,7 @@ ggplot(aisle_order)+geom_bar(stat="identity",aes(x=aisle_name,y=Frequency))+coor
 ```
        
 *** Q3:Make a table showing the most popular item in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”.
+
 ```{r Question2.3}
 aisle_popular <- subset(instacart_data,aisle =="baking ingredients"| aisle == "dog food care" | aisle == "packaged vegetables fruits")
 aisle_popular %>%
@@ -98,6 +103,7 @@ filter(n==max(n))
 *** A3: We can observe taht three most popular item in baking ingredients, dog food care, packaged vegetables fruits ailes are Ligtht Brown Sugar, Snack Sticks CHicken & Rice Recipe Dog Treats.
 
 *** Q4:Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
+
 ```{r Question2.4}
 
 aisle_mean <- subset(instacart_data, product_name == "Pink Lady Apples" | product_name =="Coffee Ice Crean")
@@ -116,15 +122,35 @@ noaa_data <- ny_noaa %>%
   transform(data = as.numeric(data))
 head(noaa_data)
 ```
+*** Description of dataset: This dataset contained the information of the amount of precipitation, snowfall, snow depth and Max/Min temperature of Weather Station in New York from 1981 to 2010. We have 2595176 observations of 7 variables. All variables in this dataset are character variable. There are several important variables. First is the date, it tells me when is the weather condition recorded. Second is the variable of describing weather including: prcp, snow, tmax, tmin.Also, I notice that 1134358 observations of tmax and 1134420 observations of tmin is missing. This indicate that about half of observations of tmax and tmin is missing. This could be a big problem when determined the effects of tmax and tmin. 
+
 ```{r qeustion3.1}
-noaa_snow <- subset(noaa_data, type == "snow")
-noaa_snow_count <- count(noaa_snow, data)
-filter(noaa_snow_count,n == max(n))
+ noaa_data %>%
+  filter(type == "snow") %>%
+  group_by(type,data) %>%
+  summarize(n_obs=n()) %>%
+  count(max(n_obs))
 ```
 
 *** Q1: For snowfall, what are the most commonly observed values? Why?
 
 *** A1: For snowfall, 0 are the most commonly observed values. This happens beacuse in the most time, we will not have snow days. Thus 0 are the most commonly observe values. 
+
+*** Q2: Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
+
+*** A2: The plot is the following. From what we observed, the average max temperature is very consistent in July, around 25 degrees of Celsius. However, the temperature in January has an outlier. In 2004, the max temperature was -10 degrees of, and in 2006 the max temperature is 10 degrees of Celsius.
+
+```{r Quesiton3.2,fig.height=10}
+noaa_tmax <- subset(noaa_data, type =="tmax" & (month == "01" | month == "07")) %>%
+  group_by(year,month) %>%
+  summarize(mean_tmax=mean(data))
+ggplot(noaa_tmax,aes(x=year,y=mean_tmax))+
+  geom_bar(stat="identity")+
+  facet_grid(.~month)+coord_flip()
+``` 
+
+
+
 
 ```{r Question3.3,fig.width=20,fig.height=12}
 ny_noaa_plot1 <- subset(ny_noaa,!is.na(tmax) & !is.na(tmin))
@@ -137,6 +163,3 @@ plot2 <- ggplot(ny_noaa_plot2,aes(x=data,fill=year))+geom_histogram()
 ggarrange(plot1,plot2,labels=c("Tmax vs Tmin","Distribution Of Snowfall"))
 ```
 
-*** Q1: For snowfall, what are the most commonly observed values? Why?
-
-*** A1: 
